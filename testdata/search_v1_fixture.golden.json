@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "id": "123",
+      "title": "Draft Law 123",
+      "status": "Registered",
+      "registrationDate": "2026-04-13",
+      "subject": "Public Safety",
+      "url": "https://itd.rada.gov.ua/bill/123"
+    },
+    {
+      "id": "321",
+      "title": "Draft Law 321",
+      "status": "In Committee",
+      "registrationDate": "2026-03-28",
+      "subject": "Education Reform",
+      "url": "https://itd.rada.gov.ua/bill/321"
+    }
+  ],
+  "count": 2
+}
