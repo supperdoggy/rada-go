@@ -1,43 +1,105 @@
 {
-  "id": "123",
-  "title": "Draft Law 123",
-  "status": "In committee",
+  "id": "57707",
+  "title": "Проект Постанови про прийняття за основу проекту Закону України про верифікацію та моніторинг державних виплат",
+  "status": "Постанову підписано",
   "dates": [
     {
-      "label": "Registered",
-      "value": "2026-04-01"
+      "label": "Номер, дата реєстрації",
+      "value": "1231/П від 19.09.2019"
     },
     {
-      "label": "First reading",
-      "value": "2026-04-10"
+      "label": "Номер, дата акту",
+      "value": "126-IX від 20.09.2019"
     }
   ],
+  "registration": {
+    "number": "1231/П",
+    "date": "19.09.2019",
+    "archived": true
+  },
+  "act": {
+    "text": "126-IX",
+    "date": "20.09.2019",
+    "url": "https://zakon.rada.gov.ua/go/126-IX"
+  },
+  "registrationSession": "2 сесія IX скликання",
+  "category": "Соціальна політика",
+  "initiativeSubject": "Народний депутат України",
   "initiators": [
     {
-      "name": "Jane Doe",
-      "role": "MP"
+      "name": "Третьякова Галина Миколаївна (IX скликання)",
+      "url": "https://itd.rada.gov.ua/struct/uk/Structure/MPs?userId=19740"
     }
   ],
+  "mainCommittee": {
+    "text": "Третьякова Г. М. Комітет Верховної Ради України з питань соціальної політики та захисту прав ветеранів"
+  },
   "committees": [
     {
-      "name": "Budget Committee",
-      "role": "Lead"
+      "name": "Третьякова Г. М. Комітет Верховної Ради України з питань соціальної політики та захисту прав ветеранів",
+      "role": "Головний комітет"
     }
   ],
   "documents": [
     {
-      "title": "Comparative Table",
-      "type": "PDF",
-      "date": "2026-04-11",
-      "url": "https://itd.rada.gov.ua/docs/123/table.pdf"
+      "title": "Проект Постанови",
+      "date": "19.09.2019",
+      "url": "https://itd.rada.gov.ua/billinfo/Bills/pubFile/3129875"
+    }
+  ],
+  "relatedBills": [
+    {
+      "number": "1231",
+      "registrationDate": "02.09.2019",
+      "title": "Пропозиції Президента України до Закону Про верифікацію та моніторинг державних виплат",
+      "url": "https://itd.rada.gov.ua/billinfo/Bills/Card/57708"
     }
   ],
   "timeline": [
     {
-      "date": "2026-04-10",
-      "status": "Scheduled",
-      "note": "Added to agenda"
+      "date": "25.09.2019",
+      "status": "Розсилання акта"
+    },
+    {
+      "date": "24.09.2019",
+      "status": "Постанову підписано"
+    },
+    {
+      "date": "23.09.2019",
+      "status": "Передано на підпис Голові Верховної Ради України"
+    },
+    {
+      "date": "23.09.2019",
+      "status": "Передано для візування в головний комітет"
+    },
+    {
+      "date": "20.09.2019",
+      "status": "Одержано для оформлення"
+    },
+    {
+      "date": "20.09.2019",
+      "status": "Постанову прийнято"
+    },
+    {
+      "date": "20.09.2019",
+      "status": "Вручено для розгляду"
+    },
+    {
+      "date": "19.09.2019",
+      "status": "Направлено до Комітету"
+    },
+    {
+      "date": "19.09.2019",
+      "status": "Передано в тираж"
+    },
+    {
+      "date": "19.09.2019",
+      "status": "Одержано Верховною Радою України"
     }
   ],
-  "sourceURL": "https://itd.rada.gov.ua/bill/123"
+  "chronologyURL": "https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_hr_wohf?zn=1231%2F%D0%9F",
+  "votingResults": {
+    "url": "https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_gol_dep_wohf?zn=1231%2F%D0%9F"
+  },
+  "sourceURL": "https://itd.rada.gov.ua"
 }

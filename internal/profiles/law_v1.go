@@ -24,35 +24,25 @@ func (p lawProjectV1Profile) Selectors() LawProjectSelectorSet {
 
 type lawProjectV1Selectors struct{}
 
-func (lawProjectV1Selectors) RootContainer() string { return "#LawProjectContainer" }
-func (lawProjectV1Selectors) ID() string            { return ".law-id" }
-func (lawProjectV1Selectors) Title() string         { return ".law-title" }
-func (lawProjectV1Selectors) Status() string        { return ".law-status" }
-func (lawProjectV1Selectors) DatesRows() string     { return ".law-dates .date-row" }
-func (lawProjectV1Selectors) DateLabel() string     { return ".date-label" }
-func (lawProjectV1Selectors) DateValue() string     { return ".date-value" }
-func (lawProjectV1Selectors) InitiatorRows() string { return ".law-initiators .initiator-row" }
-func (lawProjectV1Selectors) InitiatorName() string { return ".initiator-name" }
-func (lawProjectV1Selectors) InitiatorRole() string { return ".initiator-role" }
-func (lawProjectV1Selectors) CommitteeRows() string { return ".law-committees .committee-row" }
-func (lawProjectV1Selectors) CommitteeName() string { return ".committee-name" }
-func (lawProjectV1Selectors) CommitteeRole() string { return ".committee-role" }
-func (lawProjectV1Selectors) DocumentRows() string  { return ".law-documents .document-row" }
-func (lawProjectV1Selectors) DocumentTitle() string { return ".document-title" }
-func (lawProjectV1Selectors) DocumentType() string  { return ".document-type" }
-func (lawProjectV1Selectors) DocumentDate() string  { return ".document-date" }
-func (lawProjectV1Selectors) DocumentLink() string  { return ".document-link" }
-func (lawProjectV1Selectors) DocumentURLAttr() string {
-	return "href"
+func (lawProjectV1Selectors) RootContainer() string { return ".wrap-body" }
+func (lawProjectV1Selectors) Title() string         { return ".around-create.card-zakonoproektu h2.h2.text" }
+func (lawProjectV1Selectors) SummaryRows() string {
+	return ".around-create.card-zakonoproektu .info > .row"
 }
-func (lawProjectV1Selectors) TimelineRows() string {
-	return ".law-timeline .timeline-row"
+func (lawProjectV1Selectors) SummaryLabel() string { return ".font-weight-bold" }
+func (lawProjectV1Selectors) SummaryValue() string { return ".col" }
+func (lawProjectV1Selectors) IDNode() string       { return "#qr-code" }
+func (lawProjectV1Selectors) TimelineHeaderStatus() string {
+	return "#nav-tab1 thead th:nth-child(2)"
 }
-func (lawProjectV1Selectors) TimelineDate() string { return ".timeline-date" }
-func (lawProjectV1Selectors) TimelineStatus() string {
-	return ".timeline-status"
-}
-func (lawProjectV1Selectors) TimelineNote() string { return ".timeline-note" }
-func (lawProjectV1Selectors) SourceURLAttr() string {
-	return "data-source-url"
-}
+func (lawProjectV1Selectors) TimelineRows() string            { return "#nav-tab1 tbody tr" }
+func (lawProjectV1Selectors) TimelineDate() string            { return "td:nth-child(1)" }
+func (lawProjectV1Selectors) TimelineStatus() string          { return "td:nth-child(2)" }
+func (lawProjectV1Selectors) TimelineNote() string            { return "" }
+func (lawProjectV1Selectors) RelatedRows() string             { return "#nav-tab3 tbody tr" }
+func (lawProjectV1Selectors) RelatedNumberLink() string       { return "td:nth-child(1) a" }
+func (lawProjectV1Selectors) RelatedRegistrationDate() string { return "td:nth-child(2)" }
+func (lawProjectV1Selectors) RelatedTitle() string            { return "td:nth-child(3)" }
+func (lawProjectV1Selectors) LinkURLAttr() string             { return "href" }
+func (lawProjectV1Selectors) ChronologyEmbed() string         { return "#nav-tab5 embed" }
+func (lawProjectV1Selectors) VotingResultsEmbed() string      { return "#nav-tab6 embed" }

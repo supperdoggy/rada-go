@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -116,49 +117,77 @@ func TestSearchContext_UsesProvidedContext(t *testing.T) {
 }
 
 func TestGet_FetchesAndParsesLawProject(t *testing.T) {
-	lawHTML := readFixtureFile(t, "law_v1_fixture.html")
+	lawHTML := withLocalVotingResults(readRepoFixtureFile(t, "57707.html"), "/vote/57707")
+	votingHTML := readFixtureFile(t, "voting_results_v1_fixture.html")
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/bill/123" {
+		switch r.URL.Path {
+		case "/billinfo/Bills/Card/57707":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(lawHTML)
+		case "/vote/57707":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(votingHTML)
+		default:
 			t.Fatalf("unexpected path: %s", r.URL.Path)
 		}
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = w.Write(lawHTML)
 	}))
 	defer srv.Close()
 
 	c := New(srv.URL)
-	resp, err := c.Get("123")
+	resp, err := c.Get("57707")
 	if err != nil {
 		t.Fatalf("get: %v", err)
 	}
 
-	if resp.ID != "123" {
+	if resp.ID != "57707" {
 		t.Fatalf("unexpected id: %q", resp.ID)
 	}
-	if resp.SourceURL != srv.URL+"/bill/123" {
+	if resp.Title == "" {
+		t.Fatal("expected parsed title")
+	}
+	if resp.SourceURL != srv.URL+"/billinfo/Bills/Card/57707" {
 		t.Fatalf("unexpected source url: %q", resp.SourceURL)
 	}
-	if len(resp.Documents) != 1 || resp.Documents[0].URL != srv.URL+"/docs/123/table.pdf" {
+	if len(resp.Documents) != 1 || resp.Documents[0].URL != srv.URL+"/billinfo/Bills/pubFile/3129875" {
 		t.Fatalf("unexpected document url: %+v", resp.Documents)
+	}
+	if resp.VotingResults == nil || resp.VotingResults.URL != srv.URL+"/vote/57707" {
+		t.Fatalf("unexpected voting results: %+v", resp.VotingResults)
+	}
+	if len(resp.VotingResults.Summary) != 3 {
+		t.Fatalf("unexpected voting summary: %+v", resp.VotingResults.Summary)
 	}
 }
 
 func TestLawProjectDetails_BackwardCompatible(t *testing.T) {
-	lawHTML := readFixtureFile(t, "law_v1_fixture.html")
+	lawHTML := withLocalVotingResults(readRepoFixtureFile(t, "57707.html"), "/vote/57707")
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		_, _ = w.Write(lawHTML)
+		switch r.URL.Path {
+		case "/billinfo/Bills/Card/57707":
+			_, _ = w.Write(lawHTML)
+		case "/vote/57707":
+			_, _ = w.Write([]byte("<html><body></body></html>"))
+		default:
+			t.Fatalf("unexpected path: %s", r.URL.Path)
+		}
 	}))
 	defer srv.Close()
 
 	c := New(srv.URL)
-	resp, err := c.LawProjectDetails(context.Background(), "123")
+	resp, err := c.LawProjectDetails(context.Background(), "57707")
 	if err != nil {
 		t.Fatalf("law project details: %v", err)
 	}
-	if resp.ID != "123" {
+	if resp.ID != "57707" {
 		t.Fatalf("unexpected id: %q", resp.ID)
+	}
+	if resp.VotingResults == nil {
+		t.Fatal("expected voting results metadata")
+	}
+	if len(resp.VotingResults.Summary) != 0 {
+		t.Fatalf("expected empty voting summary fallback, got %+v", resp.VotingResults.Summary)
 	}
 }
 
@@ -185,4 +214,25 @@ func readFixtureFile(t *testing.T, name string) []byte {
 	}
 
 	return content
+}
+
+func readRepoFixtureFile(t *testing.T, name string) []byte {
+	t.Helper()
+
+	path := filepath.Join("..", name)
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read fixture %s: %v", path, err)
+	}
+
+	return content
+}
+
+func withLocalVotingResults(raw []byte, localPath string) []byte {
+	return []byte(strings.Replace(
+		string(raw),
+		"https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_gol_dep_wohf?zn=1231%2F%D0%9F",
+		localPath,
+		1,
+	))
 }

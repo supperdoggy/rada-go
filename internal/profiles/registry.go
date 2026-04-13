@@ -28,29 +28,23 @@ type SearchSelectorSet interface {
 
 type LawProjectSelectorSet interface {
 	RootContainer() string
-	ID() string
 	Title() string
-	Status() string
-	DatesRows() string
-	DateLabel() string
-	DateValue() string
-	InitiatorRows() string
-	InitiatorName() string
-	InitiatorRole() string
-	CommitteeRows() string
-	CommitteeName() string
-	CommitteeRole() string
-	DocumentRows() string
-	DocumentTitle() string
-	DocumentType() string
-	DocumentDate() string
-	DocumentLink() string
-	DocumentURLAttr() string
+	SummaryRows() string
+	SummaryLabel() string
+	SummaryValue() string
+	IDNode() string
+	TimelineHeaderStatus() string
 	TimelineRows() string
 	TimelineDate() string
 	TimelineStatus() string
 	TimelineNote() string
-	SourceURLAttr() string
+	RelatedRows() string
+	RelatedNumberLink() string
+	RelatedRegistrationDate() string
+	RelatedTitle() string
+	LinkURLAttr() string
+	ChronologyEmbed() string
+	VotingResultsEmbed() string
 }
 
 type SearchProfile interface {

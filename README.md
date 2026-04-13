@@ -22,7 +22,7 @@ Go client skeleton for fetching and parsing law-project HTML into stable, app-fr
 The HTTP client currently assumes:
 
 - `GET /search` for search results
-- `GET /bill/{id}` for law-project details
+- `GET /billinfo/Bills/Card/{id}` for law-project details
 - HTML compatible with the selector profiles in `internal/profiles/`
 
 ## Architecture
