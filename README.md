@@ -1,14 +1,15 @@
-# VR API HTML Client (Scaffold)
+# VR API Client
 
-Go client scaffold for parsing Verkhovna Rada ITD HTML into stable, app-friendly JSON models.
+Go client skeleton for fetching and parsing law-project HTML into stable, app-friendly JSON models.
 
-## Scope (Current)
+## Scope
 
 - No authentication (public pages only)
-- HTML-in parsing API (`[]byte` and `string`)
-- Search and law-project detail parsing entrypoints
+- Simple client entrypoint: `client.New(url)`
+- `Search(params)` for law-project search
+- `Get(id)` for law-project details
+- HTML parsing helpers (`[]byte` and `string`)
 - Versioned selector profiles for quick layout-fix updates
-- Future HTTP fetch methods declared but intentionally not implemented yet
 
 ## Module
 
@@ -17,6 +18,12 @@ Go client scaffold for parsing Verkhovna Rada ITD HTML into stable, app-friendly
 ## Default Target
 
 `https://itd.rada.gov.ua`
+
+The HTTP client currently assumes:
+
+- `GET /search` for search results
+- `GET /bill/{id}` for law-project details
+- HTML compatible with the selector profiles in `internal/profiles/`
 
 ## Architecture
 
@@ -32,19 +39,27 @@ Go client scaffold for parsing Verkhovna Rada ITD HTML into stable, app-friendly
 package main
 
 import (
-	"context"
 	"log"
 
 	"github.com/supperdoggy/vr_api/client"
 )
 
 func main() {
-	c := client.NewClient()
-	resp, err := c.ParseSearchHTMLString(context.Background(), `<div id="SearchResultContainer"></div>`)
+	c := client.New("https://example.com")
+
+	resp, err := c.Search(client.SearchParams{
+		Term: "budget",
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Printf("search results: %d", resp.Count)
+
+	details, err := c.Get(resp.Items[0].ID)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("law project: %s", details.Title)
 }
 ```
 
