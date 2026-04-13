@@ -23,7 +23,7 @@ func TestParseSearchHTML_Golden(t *testing.T) {
 
 func TestParseLawProjectHTML_Golden(t *testing.T) {
 	c := NewClient()
-	html := readFixture(t, "law_v1_fixture.html")
+	html := readRepoFixture(t, "57707.html")
 
 	got, err := c.ParseLawProjectHTML(context.Background(), html)
 	if err != nil {
@@ -36,6 +36,16 @@ func TestParseLawProjectHTML_Golden(t *testing.T) {
 func readFixture(t *testing.T, name string) []byte {
 	t.Helper()
 	path := filepath.Join("..", "testdata", name)
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read fixture %s: %v", path, err)
+	}
+	return content
+}
+
+func readRepoFixture(t *testing.T, name string) []byte {
+	t.Helper()
+	path := filepath.Join("..", name)
 	content, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("read fixture %s: %v", path, err)

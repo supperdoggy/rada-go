@@ -9,8 +9,14 @@ type (
 	SearchItem        = schema.SearchItem
 	LawProjectDetails = schema.LawProjectDetails
 	DateEntry         = schema.DateEntry
+	Registration      = schema.Registration
+	Act               = schema.Act
+	TextLink          = schema.TextLink
 	Initiator         = schema.Initiator
 	Committee         = schema.Committee
 	Document          = schema.Document
+	RelatedBill       = schema.RelatedBill
 	TimelineEvent     = schema.TimelineEvent
+	VotingResults     = schema.VotingResults
+	VoteSummaryItem   = schema.VoteSummaryItem
 )
