@@ -158,7 +158,9 @@ func (c *Client) fetch(ctx context.Context, target string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
 		return nil, fmt.Errorf("unexpected status %d for %s", resp.StatusCode, target)
