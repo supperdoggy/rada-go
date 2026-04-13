@@ -1,10 +1,13 @@
-.PHONY: run test lint fmt
+.PHONY: run build test lint fmt
 
 RUN_TARGET ?= ./cmd/...
 GOLANGCI_LINT ?= golangci-lint
 
 run:
 	go run $(RUN_TARGET)
+
+build:
+	go build ./...
 
 test:
 	go test ./...
