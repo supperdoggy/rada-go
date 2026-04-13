@@ -1,6 +1,6 @@
 package schema
 
-// SearchQuery defines a future-ready request contract for remote search APIs.
+// SearchQuery defines the public request contract for law-project searches.
 type SearchQuery struct {
 	Term    string            `json:"term,omitempty"`
 	Page    int               `json:"page,omitempty"`

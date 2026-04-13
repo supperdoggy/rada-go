@@ -2,8 +2,13 @@ package client
 
 import (
 	"context"
+	"fmt"
+	"io"
 	"net/http"
 	"net/url"
+	"path"
+	"sort"
+	"strconv"
 
 	"github.com/supperdoggy/vr_api/internal/parser"
 	"github.com/supperdoggy/vr_api/internal/profiles"
@@ -18,6 +23,14 @@ type Client struct {
 
 	searchProfileVersion     string
 	lawProjectProfileVersion string
+}
+
+func New(baseURL string, opts ...Option) *Client {
+	if baseURL != "" {
+		opts = append([]Option{WithBaseURL(baseURL)}, opts...)
+	}
+
+	return NewClient(opts...)
 }
 
 func NewClient(opts ...Option) *Client {
@@ -101,16 +114,108 @@ func (c *Client) ParseLawProjectHTMLString(ctx context.Context, html string) (La
 	return c.ParseLawProjectHTML(ctx, []byte(html))
 }
 
-func (c *Client) Search(ctx context.Context, query SearchQuery) (SearchResponse, error) {
-	_ = ctx
-	_ = query
-	return SearchResponse{}, ErrNotImplemented
+func (c *Client) Search(params SearchParams) (SearchResponse, error) {
+	return c.SearchContext(context.Background(), params)
+}
+
+func (c *Client) SearchContext(ctx context.Context, params SearchParams) (SearchResponse, error) {
+	body, err := c.fetch(ctx, c.searchURL(params))
+	if err != nil {
+		return SearchResponse{}, err
+	}
+
+	return c.ParseSearchHTML(ctx, body)
+}
+
+func (c *Client) Get(projectID string) (LawProjectDetails, error) {
+	return c.GetContext(context.Background(), projectID)
+}
+
+func (c *Client) GetContext(ctx context.Context, projectID string) (LawProjectDetails, error) {
+	body, err := c.fetch(ctx, c.lawProjectURL(projectID))
+	if err != nil {
+		return LawProjectDetails{}, err
+	}
+
+	return c.ParseLawProjectHTML(ctx, body)
 }
 
 func (c *Client) LawProjectDetails(ctx context.Context, projectID string) (LawProjectDetails, error) {
-	_ = ctx
-	_ = projectID
-	return LawProjectDetails{}, ErrNotImplemented
+	return c.GetContext(ctx, projectID)
+}
+
+func (c *Client) fetch(ctx context.Context, target string) ([]byte, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusMultipleChoices {
+		return nil, fmt.Errorf("unexpected status %d for %s", resp.StatusCode, target)
+	}
+
+	return io.ReadAll(resp.Body)
+}
+
+func (c *Client) searchURL(params SearchParams) string {
+	values := url.Values{}
+	if params.Term != "" {
+		values.Set("term", params.Term)
+	}
+	if params.Page > 0 {
+		values.Set("page", strconv.Itoa(params.Page))
+	}
+	if params.PerPage > 0 {
+		values.Set("perPage", strconv.Itoa(params.PerPage))
+	}
+
+	if len(params.Filters) > 0 {
+		keys := make([]string, 0, len(params.Filters))
+		for key := range params.Filters {
+			keys = append(keys, key)
+		}
+		sort.Strings(keys)
+		for _, key := range keys {
+			values.Set(key, params.Filters[key])
+		}
+	}
+
+	return c.resolveURL("/search", values)
+}
+
+func (c *Client) lawProjectURL(projectID string) string {
+	return c.resolveURL(path.Join("/bill", projectID), nil)
+}
+
+func (c *Client) resolveURL(route string, values url.Values) string {
+	base, err := url.Parse(c.baseURL)
+	if err != nil {
+		return c.baseURL
+	}
+
+	target, err := url.Parse(route)
+	if err != nil {
+		return c.baseURL
+	}
+
+	resolved := base.ResolveReference(target)
+	if len(values) > 0 {
+		resolved.RawQuery = values.Encode()
+	}
+
+	return resolved.String()
 }
 
 func (c *Client) normalizeURL(raw string) string {
