@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/supperdoggy/vr_api/internal/parser"
 	"github.com/supperdoggy/vr_api/internal/profiles"
@@ -113,12 +113,17 @@ func (c *Client) Search(params SearchParams) (SearchResponse, error) {
 }
 
 func (c *Client) SearchContext(ctx context.Context, params SearchParams) (SearchResponse, error) {
-	body, err := c.fetch(ctx, c.searchURL(params))
+	body, err := c.fetchForm(ctx, c.searchURL(), c.searchFormValues(params))
 	if err != nil {
 		return SearchResponse{}, err
 	}
 
-	return c.ParseSearchHTML(ctx, body)
+	resp, err := c.ParseSearchHTML(ctx, body)
+	if err != nil {
+		return SearchResponse{}, err
+	}
+
+	return resp, nil
 }
 
 func (c *Client) Get(projectID string) (LawProjectDetails, error) {
@@ -153,13 +158,25 @@ func (c *Client) LawProjectDetails(ctx context.Context, projectID string) (LawPr
 }
 
 func (c *Client) fetch(ctx context.Context, target string) ([]byte, error) {
+	return c.fetchRequest(ctx, http.MethodGet, target, nil, "")
+}
+
+func (c *Client) fetchForm(ctx context.Context, target string, values url.Values) ([]byte, error) {
+	body := strings.NewReader(values.Encode())
+	return c.fetchRequest(ctx, http.MethodPost, target, body, "application/x-www-form-urlencoded")
+}
+
+func (c *Client) fetchRequest(ctx context.Context, method, target string, body io.Reader, contentType string) ([]byte, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, target, nil)
+	req, err := http.NewRequestWithContext(ctx, method, target, body)
 	if err != nil {
 		return nil, err
+	}
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
 	}
 
 	resp, err := c.httpClient.Do(req)
@@ -182,30 +199,42 @@ func (c *Client) fetch(ctx context.Context, target string) ([]byte, error) {
 	return io.ReadAll(reader)
 }
 
-func (c *Client) searchURL(params SearchParams) string {
+func (c *Client) searchURL() string {
+	return c.resolveURL("/billinfo/Bills/searchResults", nil)
+}
+
+func (c *Client) searchFormValues(params SearchParams) url.Values {
+	page := params.Page
+	if page <= 0 {
+		page = 1
+	}
+
+	perPage := params.PerPage
+	if perPage <= 0 {
+		perPage = 30
+	}
+
+	compareOperation := params.RegistrationNumberCompareOperation
+	if compareOperation == 0 {
+		compareOperation = 2
+	}
+
 	values := url.Values{}
-	if params.Term != "" {
-		values.Set("term", params.Term)
+	if params.Session > 0 {
+		values.Set("BillSearchModel.session", strconv.Itoa(params.Session))
 	}
-	if params.Page > 0 {
-		values.Set("page", strconv.Itoa(params.Page))
-	}
-	if params.PerPage > 0 {
-		values.Set("perPage", strconv.Itoa(params.PerPage))
-	}
+	values.Set("BillSearchModel.registrationNumberCompareOperation", strconv.Itoa(compareOperation))
+	values.Set("BillSearchModel.registrationNumber", params.RegistrationNumber)
+	values.Set("BillSearchModel.registrationRangeStart", params.RegistrationRangeStart)
+	values.Add("__Invariant", "BillSearchModel.registrationRangeStart")
+	values.Set("BillSearchModel.registrationRangeEnd", params.RegistrationRangeEnd)
+	values.Add("__Invariant", "BillSearchModel.registrationRangeEnd")
+	values.Set("BillSearchModel.name", params.Name)
+	values.Set("BillSearchModel.detailView", strconv.FormatBool(params.DetailView))
+	values.Set("Paging.page", strconv.Itoa(page))
+	values.Set("Paging.per_page", strconv.Itoa(perPage))
 
-	if len(params.Filters) > 0 {
-		keys := make([]string, 0, len(params.Filters))
-		for key := range params.Filters {
-			keys = append(keys, key)
-		}
-		sort.Strings(keys)
-		for _, key := range keys {
-			values.Set(key, params.Filters[key])
-		}
-	}
-
-	return c.resolveURL("/search", values)
+	return values
 }
 
 func (c *Client) lawProjectURL(projectID string) string {

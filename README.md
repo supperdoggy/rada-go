@@ -21,7 +21,7 @@ Go client skeleton for fetching and parsing law-project HTML into stable, app-fr
 
 The HTTP client currently assumes:
 
-- `GET /search` for search results
+- `POST /billinfo/Bills/searchResults` for search results
 - `GET /billinfo/Bills/Card/{id}` for law-project details
 - HTML compatible with the selector profiles in `internal/profiles/`
 
@@ -48,7 +48,8 @@ func main() {
 	c := client.New("https://example.com")
 
 	resp, err := c.Search(client.SearchParams{
-		Term: "budget",
+		Session: 10,
+		Name:    "ратифікацію",
 	})
 	if err != nil {
 		log.Fatal(err)

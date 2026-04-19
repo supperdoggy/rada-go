@@ -1,21 +1,279 @@
-<!doctype html>
-<html>
-  <body>
-    <div id="SearchResultContainer">
-      <div class="search-result-row">
-        <a class="result-title" href="/bill/123">Draft Law 123</a>
-        <span class="result-id">123</span>
-        <span class="result-status">Registered</span>
-        <span class="result-registration-date">2026-04-13</span>
-        <span class="result-subject">Public Safety</span>
-      </div>
-      <div class="search-result-row">
-        <a class="result-title" href="https://itd.rada.gov.ua/bill/321">Draft Law 321</a>
-        <span class="result-id">321</span>
-        <span class="result-status">In Committee</span>
-        <span class="result-registration-date">2026-03-28</span>
-        <span class="result-subject">Education Reform</span>
-      </div>
-    </div>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Результати пошуку - Законотворчість</title>
+</head>
+<body>
+<div id="searchResultContainer" class="search-result-container">
+    <form action="/billinfo/Bills/searchResults" method="post">
+        <div id="anchor" class="margin-left">
+            <h2 class="h2">Результати пошуку законопроектiв, зареєстрованих Верховною Радою України</h2>
+            <p class="condition">Знайдено законопроектів: 14891</p>
+        </div>
+
+        <div class="search-criteria">
+            <div>
+                <input type="hidden" id="BillSearchModel_session" name="BillSearchModel.session" value="10">
+                <input type="hidden" id="BillSearchModel_registrationNumberCompareOperation" name="BillSearchModel.registrationNumberCompareOperation" value="2">
+                <input type="hidden" id="BillSearchModel_registrationNumber" name="BillSearchModel.registrationNumber" value="">
+                <input type="hidden" id="BillSearchModel_registrationRangeStart" name="BillSearchModel.registrationRangeStart" value="">
+                <input type="hidden" id="BillSearchModel_registrationRangeEnd" name="BillSearchModel.registrationRangeEnd" value="">
+                <input type="hidden" id="BillSearchModel_name" name="BillSearchModel.name" value="">
+                <input type="hidden" id="BillSearchModel_detailView" name="BillSearchModel.detailView" value="false">
+                Проекти, зареєстровані за всі сесії IX скликання
+            </div>
+            <div class="form-group">
+                <label for="perPageSelect">Законопроектів на сторінці</label>
+                <select class="form-control per-page-select" id="Paging_per_page" name="Paging.per_page">
+                    <option selected="selected" value="30">30</option>
+                    <option value="40">40</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive mt-0">
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Номер реєстрацiї</th>
+                    <th>Дата реєстрації</th>
+                    <th>Cуб'єкт законодавчої ініціативи</th>
+                    <th>Назва<br /> законопроекту</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/57706" target="_blank" class="link-blue">0001</a></td>
+                    <td>09.09.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди між Урядом України та Урядом Сполучених Штатів Америки для поліпшення виконання податкових правил й застосування положень Закону США &quot;Про податкові вимоги до іноземних рахунків&quot; (FATCA)</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/57705" target="_blank" class="link-blue">0002</a></td>
+                    <td>10.09.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди між Урядом України та Урядом Малайзії про уникнення подвійного оподаткування та запобігання податковим ухиленням стосовно податків на доходи та Протоколу до неї</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/57704" target="_blank" class="link-blue">0003</a></td>
+                    <td>10.09.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Протоколу про внесення змін до Конвенції між Урядом України і Урядом Республіки Кіпр про уникнення подвійного оподаткування та запобігання податковим ухиленням стосовно податків на доходи</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/57703" target="_blank" class="link-blue">0004</a></td>
+                    <td>10.09.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Протоколу між Урядом України і Швейцарською Федеральною Радою про внесення змін до Конвенції між Урядом України і Швейцарською Федеральною Радою про уникнення подвійного оподаткування стосовно податків на доходи і на капітал та Протоколу до неї, вчинених у м. Києві 30 жовтня 2000 року</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58106" target="_blank" class="link-blue">0005</a></td>
+                    <td>10.09.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Протоколу між Урядом України і Урядом Турецької Республіки про внесення змін до Угоди між Урядом України і Урядом Турецької Республіки про уникнення подвійного оподаткування та попередження податкових ухилень стосовно податків на доходи і майно</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58107" target="_blank" class="link-blue">0006</a></td>
+                    <td>10.09.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Протоколу між Урядом України і Урядом Сполученого Королівства Великої Британії та Північної Ірландії про внесення змін до Конвенції між Урядом України і Урядом Сполученого Королівства Великобританії і Північної Ірландії про усунення подвійного оподаткування та запобігання податковим ухиленням стосовно податків на доход і на приріст вартості майна, вчиненої у Лондоні 10 лютого 1993 року</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58411" target="_blank" class="link-blue">0007</a></td>
+                    <td>13.11.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Угоди (у формі обміну нотами) між Україною та Королівством Нідерланди про продовження до 1 серпня 2020 року строку дії Угоди між Україною та Королівством Нідерланди про Міжнародну місію захисту розслідування від 28 липня 2014 року</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58412" target="_blank" class="link-blue">0008</a></td>
+                    <td>13.11.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Фінансової угоди (Проект &quot;Розширення харківського метрополітену&quot; (Проект &quot;Подовження третьої лінії метрополітену у місті Харків&quot;) між Україною та Європейським інвестиційним банком</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58448" target="_blank" class="link-blue">0009</a></td>
+                    <td>15.11.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Угоди у формі обміну листами між Україною та Європейським Союзом про внесення змін до торговельних преференцій щодо м&#x27;яса птиці та переробленого м&#x27;яса птиці, передбачених Угодою про асоціацію між Україною, з однієї сторони, та Європейським Союзом, Європейським співтовариством з атомної енергії і їхніми державами-членами, з іншої сторони</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/736" target="_blank" class="link-blue">0010</a></td>
+                    <td>21.11.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про приєднання до Угоди про розвиток мультимодальних перевезень ТРАСЕКА</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58475" target="_blank" class="link-blue">0011</a></td>
+                    <td>28.11.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Гарантійної угоди (Проект електрифікації української залізниці &quot;Електрифікація залізничного напрямку Долинська - Миколаїв - Колосівка&quot;) між Україною та Європейським банком реконструкції та розвитку</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58476" target="_blank" class="link-blue">0012</a></td>
+                    <td>02.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди (у формі обміну нотами) між Урядом України та Урядом Федеративної Республіки Німеччина про створення місцевих бюро Німецького товариства міжнародного співробітництва ҐмбГ (GIZ GmbH) та Кредитної установи для відбудови (KfW)</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58484" target="_blank" class="link-blue">0013</a></td>
+                    <td>05.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про приєднання України до Європейського фонду підтримки спільного виробництва та розповсюдження художніх кінематографічних та аудіовізуальних творів (&quot;EURIMAGES&quot;)</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58502" target="_blank" class="link-blue">0014</a></td>
+                    <td>13.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Фінансової угоди (Проект &quot;Підвищення безпеки автомобільних доріг в містах України&quot;) між Україною та Європейськім інвестиційним банком</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58504" target="_blank" class="link-blue">0015</a></td>
+                    <td>13.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Грантової угоди (Проект &quot;Миколаївводоканал&quot; (Розвиток системи водопостачання та водовідведення в місті Миколаїв) за Програмою &quot;E5P&quot; між Україною та Європейським інвестиційним банком</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58526" target="_blank" class="link-blue">0016</a></td>
+                    <td>16.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Протоколу про внесення змін до Угоди між Урядом України і Урядом Республіки Сінгапур про уникнення подвійного оподаткування та запобігання податковим ухиленням стосовно податків на доходи</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58527" target="_blank" class="link-blue">0017</a></td>
+                    <td>16.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Протоколу між Урядом України та Урядом Грузії про внесення змін до Угоди між Урядом України та Урядом Республіки Грузія про вільну торгівлю від 9 січня 1995 року</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58528" target="_blank" class="link-blue">0018</a></td>
+                    <td>16.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди про співробітництво у сфері розвитку між Урядом України та Урядом Турецької Республіки</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/626" target="_blank" class="link-blue">0019</a></td>
+                    <td>16.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Рамкової угоди між Урядом України та Урядом Королівства Данія щодо загальних умов та процедур, організаційних заходів та фінансових умов реалізації програми Danida Business Finance в Україні</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58533" target="_blank" class="link-blue">0020</a></td>
+                    <td>18.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Договору між Україною та Федеративною Республікою Бразилія про взаємну правову допомогу та правові відносини у цивільних справах</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/58542" target="_blank" class="link-blue">0021</a></td>
+                    <td>20.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди між Кабінетом Міністрів України та Урядом Литовської Республіки про працевлаштування та співробітництво у сфері трудової міграції</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/71" target="_blank" class="link-blue">0022</a></td>
+                    <td>26.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Договору між Україною та Аргентинською Республікою про видачу правопорушників</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/75" target="_blank" class="link-blue">0023</a></td>
+                    <td>26.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Договору між Україною та Аргентинською Республікою про передачу засуджених осіб</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/76" target="_blank" class="link-blue">0024</a></td>
+                    <td>26.12.2019</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Договору між Україною та Аргентинською Республікою про взаємну правову допомогу у кримінальних справах</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/738" target="_blank" class="link-blue">0025</a></td>
+                    <td>27.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Рамкового договору між Урядом України та Урядом Французької Республіки щодо офіційної підтримки посилення морської безпеки та охорони України</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/577" target="_blank" class="link-blue">0026</a></td>
+                    <td>27.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди (у формі обміну листами) між Урядом України та Організацією економічного співробітництва та розвитку щодо приєднання до Декларації про міжнародні інвестиції і багатонаціональні підприємства, відповідних Рекомендацій та процедурних Рішень Ради Організації економічного співробітництва та розвитку</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/739" target="_blank" class="link-blue">0027</a></td>
+                    <td>28.12.2019</td>
+                    <td>Кабінет Міністрів України</td>
+                    <td>Проект Закону про ратифікацію Угоди про спільне виробництво аудіовізуальних творів між Кабінетом Міністрів України та Урядом Канади</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/1146" target="_blank" class="link-blue">0028</a></td>
+                    <td>13.01.2020</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Листа про внесення змін № 3 до Фінансової угоди між Україною та Європейським інвестиційним банком (Розвиток системи водопостачання та водовідведення в місті Миколаїв)</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/1147" target="_blank" class="link-blue">0029</a></td>
+                    <td>14.01.2020</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про приєднання України до Схеми сортової сертифікації насіння хрестоцвітих та інших олійних або прядивних культур та Схеми сортової сертифікації насіння цукрового та кормового буряка Організації економічного співробітництва та розвитку</td>
+                </tr>
+                <tr>
+                    <td class="euro-box"></td>
+                    <td><a href="https://itd.rada.gov.ua/billinfo/Bills/Card/1148" target="_blank" class="link-blue">0030</a></td>
+                    <td>16.01.2020</td>
+                    <td>Президент України</td>
+                    <td>Проект Закону про ратифікацію Договору між Україною та Республікою Казахстан про екстрадицію</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <input type="hidden" name="Paging.page" id="pagingPage" value="1" />
+
+        <div class="pager-container box-pagination">
+            <div class="pagination">
+                <div class="page-item page-link disabled">&laquo;</div>
+                <li class="page-item page-link active">1</li>
+                <button type="button" class="page-item page-link pagination-button" data-page="2">2</button>
+                <button type="button" class="page-item page-link pagination-button" data-page="3">3</button>
+                <div class="page-link spacing-dot">...</div>
+                <button type="button" class="page-item page-link pagination-button" data-page="497">497</button>
+                <button type="button" class="page-item page-link pagination-button" data-page="2">&raquo;</button>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
 </html>

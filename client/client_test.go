@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -56,52 +57,105 @@ func TestNewClient_WithOptions(t *testing.T) {
 
 func TestSearch_FetchesAndParsesSearchResults(t *testing.T) {
 	searchHTML := readFixtureFile(t, "search_v1_fixture.html")
+	lawHTML := withLocalLawProjectID(withLocalVotingResults(readRepoFixtureFile(t, "57707.html"), "/vote/57706"), "57706")
+	votingHTML := readFixtureFile(t, "voting_results_v1_fixture.html")
 
-	var gotQuery url.Values
+	var gotForm url.Values
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/search" {
+		switch r.URL.Path {
+		case "/billinfo/Bills/searchResults":
+			if r.Method != http.MethodPost {
+				t.Fatalf("unexpected method: %s", r.Method)
+			}
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				t.Fatalf("read request body: %v", err)
+			}
+			gotForm, err = url.ParseQuery(string(body))
+			if err != nil {
+				t.Fatalf("parse form body: %v", err)
+			}
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(searchHTML)
+		case "/billinfo/Bills/Card/57706":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(lawHTML)
+		case "/vote/57706":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(votingHTML)
+		default:
 			t.Fatalf("unexpected path: %s", r.URL.Path)
 		}
-		gotQuery = r.URL.Query()
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		_, _ = w.Write(searchHTML)
 	}))
 	defer srv.Close()
 
 	c := New(srv.URL)
 	resp, err := c.Search(SearchParams{
-		Term:    "budget",
-		Page:    2,
-		PerPage: 25,
-		Filters: map[string]string{
-			"status":  "registered",
-			"session": "9",
-		},
+		Session:                            10,
+		RegistrationNumberCompareOperation: 2,
+		Name:                               "ратифікацію",
+		Page:                               1,
+		PerPage:                            30,
 	})
 	if err != nil {
 		t.Fatalf("search: %v", err)
 	}
 
-	if gotQuery.Get("term") != "budget" {
-		t.Fatalf("unexpected term query: %q", gotQuery.Get("term"))
+	if gotForm.Get("BillSearchModel.session") != "10" {
+		t.Fatalf("unexpected session form value: %q", gotForm.Get("BillSearchModel.session"))
 	}
-	if gotQuery.Get("page") != "2" {
-		t.Fatalf("unexpected page query: %q", gotQuery.Get("page"))
+	if gotForm.Get("BillSearchModel.registrationNumberCompareOperation") != "2" {
+		t.Fatalf("unexpected compare operation: %q", gotForm.Get("BillSearchModel.registrationNumberCompareOperation"))
 	}
-	if gotQuery.Get("perPage") != "25" {
-		t.Fatalf("unexpected perPage query: %q", gotQuery.Get("perPage"))
+	if gotForm.Get("BillSearchModel.name") != "ратифікацію" {
+		t.Fatalf("unexpected name form value: %q", gotForm.Get("BillSearchModel.name"))
 	}
-	if gotQuery.Get("status") != "registered" {
-		t.Fatalf("unexpected status query: %q", gotQuery.Get("status"))
+	if gotForm.Get("BillSearchModel.detailView") != "false" {
+		t.Fatalf("unexpected detailView form value: %q", gotForm.Get("BillSearchModel.detailView"))
 	}
-	if gotQuery.Get("session") != "9" {
-		t.Fatalf("unexpected session query: %q", gotQuery.Get("session"))
+	if gotForm.Get("Paging.page") != "1" {
+		t.Fatalf("unexpected page form value: %q", gotForm.Get("Paging.page"))
 	}
-	if resp.Count != 2 {
-		t.Fatalf("expected 2 items, got %d", resp.Count)
+	if gotForm.Get("Paging.per_page") != "30" {
+		t.Fatalf("unexpected per-page form value: %q", gotForm.Get("Paging.per_page"))
 	}
-	if resp.Items[0].URL != srv.URL+"/bill/123" {
+	if resp.Count != 14891 {
+		t.Fatalf("expected total count 14891, got %d", resp.Count)
+	}
+	if resp.Page != 1 {
+		t.Fatalf("expected page 1, got %d", resp.Page)
+	}
+	if resp.PerPage != 30 {
+		t.Fatalf("expected perPage 30, got %d", resp.PerPage)
+	}
+	if resp.TotalPages != 497 {
+		t.Fatalf("expected total pages 497, got %d", resp.TotalPages)
+	}
+	if len(resp.Items) != 30 {
+		t.Fatalf("expected 30 items on page, got %d", len(resp.Items))
+	}
+	if resp.Items[0].ID != "57706" {
+		t.Fatalf("unexpected first item id: %q", resp.Items[0].ID)
+	}
+	if resp.Items[0].RegistrationNumber != "0001" {
+		t.Fatalf("unexpected registration number: %q", resp.Items[0].RegistrationNumber)
+	}
+	if resp.Items[0].InitiativeSubject != "Кабінет Міністрів України" {
+		t.Fatalf("unexpected initiative subject: %q", resp.Items[0].InitiativeSubject)
+	}
+	if resp.Items[0].Subject != "Кабінет Міністрів України" {
+		t.Fatalf("unexpected subject alias: %q", resp.Items[0].Subject)
+	}
+	if resp.Items[0].URL != "https://itd.rada.gov.ua/billinfo/Bills/Card/57706" {
 		t.Fatalf("unexpected normalized url: %q", resp.Items[0].URL)
+	}
+
+	details, err := c.Get(resp.Items[0].ID)
+	if err != nil {
+		t.Fatalf("get by search item id: %v", err)
+	}
+	if details.ID != "57706" {
+		t.Fatalf("unexpected details id from search item id: %q", details.ID)
 	}
 }
 
@@ -110,7 +164,7 @@ func TestSearchContext_UsesProvidedContext(t *testing.T) {
 	cancel()
 
 	c := New("https://example.com")
-	_, err := c.SearchContext(ctx, SearchParams{Term: "budget"})
+	_, err := c.SearchContext(ctx, SearchParams{Session: 10})
 	if err == nil {
 		t.Fatal("expected context cancellation error")
 	}
@@ -235,4 +289,8 @@ func withLocalVotingResults(raw []byte, localPath string) []byte {
 		localPath,
 		1,
 	))
+}
+
+func withLocalLawProjectID(raw []byte, id string) []byte {
+	return []byte(strings.Replace(string(raw), `data-id="57707"`, `data-id="`+id+`"`, 1))
 }

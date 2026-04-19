@@ -16,13 +16,15 @@ const (
 
 type SearchSelectorSet interface {
 	ResultsContainer() string
+	Count() string
 	ResultRows() string
-	ID() string
+	RegistrationNumberLink() string
 	Title() string
-	TitleLink() string
-	Status() string
 	RegistrationDate() string
-	Subject() string
+	InitiativeSubject() string
+	CurrentPage() string
+	PerPage() string
+	TotalPages() string
 	LinkURLAttr() string
 }
 

@@ -9,22 +9,27 @@ func TestSearchContractJSONFields(t *testing.T) {
 	payload := SearchResponse{
 		Items: []SearchItem{
 			{
-				ID:               "123",
-				Title:            "Draft Law",
-				Status:           "Registered",
-				RegistrationDate: "2026-04-13",
-				Subject:          "Public Safety",
-				URL:              "https://itd.rada.gov.ua/bill/123",
+				ID:                 "57706",
+				RegistrationNumber: "0001",
+				Title:              "Проект Закону про ратифікацію Угоди",
+				Status:             "",
+				RegistrationDate:   "09.09.2019",
+				InitiativeSubject:  "Кабінет Міністрів України",
+				Subject:            "Кабінет Міністрів України",
+				URL:                "https://itd.rada.gov.ua/billinfo/Bills/Card/57706",
 			},
 		},
-		Count: 1,
+		Count:      14891,
+		Page:       1,
+		PerPage:    30,
+		TotalPages: 497,
 	}
 
 	raw, err := json.Marshal(payload)
 	if err != nil {
 		t.Fatalf("marshal: %v", err)
 	}
-	want := `{"items":[{"id":"123","title":"Draft Law","status":"Registered","registrationDate":"2026-04-13","subject":"Public Safety","url":"https://itd.rada.gov.ua/bill/123"}],"count":1}`
+	want := `{"items":[{"id":"57706","registrationNumber":"0001","title":"Проект Закону про ратифікацію Угоди","status":"","registrationDate":"09.09.2019","initiativeSubject":"Кабінет Міністрів України","subject":"Кабінет Міністрів України","url":"https://itd.rada.gov.ua/billinfo/Bills/Card/57706"}],"count":14891,"page":1,"perPage":30,"totalPages":497}`
 	if string(raw) != want {
 		t.Fatalf("unexpected json contract\n got: %s\nwant: %s", raw, want)
 	}
