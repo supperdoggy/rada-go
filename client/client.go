@@ -157,6 +157,93 @@ func (c *Client) LawProjectDetails(ctx context.Context, projectID string) (LawPr
 	return c.GetContext(ctx, projectID)
 }
 
+func (c *Client) GetVotingResults(projectID string) (BillVotingResults, error) {
+	return c.GetVotingResultsContext(context.Background(), projectID)
+}
+
+func (c *Client) GetVotingResultsContext(ctx context.Context, projectID string) (BillVotingResults, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
+	details, err := c.GetContext(ctx, projectID)
+	if err != nil {
+		return BillVotingResults{}, err
+	}
+
+	result := BillVotingResults{
+		BillID:    details.ID,
+		SourceURL: details.SourceURL,
+	}
+	if details.Registration != nil {
+		result.RegistrationNumber = details.Registration.Number
+	}
+	if details.VotingResults != nil && details.VotingResults.URL != "" {
+		result.SourceURL = details.VotingResults.URL
+	}
+
+	if result.RegistrationNumber == "" || details.ChronologyURL == "" {
+		return result, nil
+	}
+
+	chronologyBody, err := c.fetch(ctx, details.ChronologyURL)
+	if err != nil {
+		return BillVotingResults{}, err
+	}
+
+	chronologyParser := parser.NewChronologyVotingHTMLParser(c.loader)
+	sittings, err := chronologyParser.Parse(ctx, chronologyBody)
+	if err != nil {
+		return BillVotingResults{}, err
+	}
+
+	plenaryParser := parser.NewPlenaryBillVotingHTMLParser(c.loader)
+	detailParser := parser.NewDetailedVotingResultsHTMLParser(c.loader)
+	seenVotes := make(map[string]struct{})
+
+	for _, sitting := range sittings {
+		plenaryURL := resolveURLAgainst(details.ChronologyURL, "/pls/radan_gs09/ns_el_h2?data="+sitting.Date+"&nom_s="+sitting.NomS)
+		plenaryBody, err := c.fetch(ctx, plenaryURL)
+		if err != nil {
+			return BillVotingResults{}, err
+		}
+
+		refs, err := plenaryParser.Parse(ctx, result.RegistrationNumber, plenaryBody)
+		if err != nil {
+			return BillVotingResults{}, err
+		}
+
+		for _, ref := range refs {
+			if _, ok := seenVotes[ref.GID]; ok {
+				continue
+			}
+			seenVotes[ref.GID] = struct{}{}
+
+			voteURL := resolveURLAgainst(plenaryURL, ref.URL)
+			voteBody, err := c.fetch(ctx, voteURL)
+			if err != nil {
+				return BillVotingResults{}, err
+			}
+
+			event, err := detailParser.Parse(ctx, voteBody)
+			if err != nil {
+				return BillVotingResults{}, err
+			}
+			if event.Title == "" {
+				event.Title = ref.Title
+			}
+			event.GID = ref.GID
+			event.URL = voteURL
+			event.RTFURL = resolveURLAgainst(voteURL, event.RTFURL)
+			event.PrintURL = resolveURLAgainst(voteURL, event.PrintURL)
+
+			result.Votes = append(result.Votes, event)
+		}
+	}
+
+	return result, nil
+}
+
 func (c *Client) fetch(ctx context.Context, target string) ([]byte, error) {
 	return c.fetchRequest(ctx, http.MethodGet, target, nil, "")
 }
@@ -273,6 +360,23 @@ func (c *Client) normalizeURL(raw string) string {
 	if err != nil {
 		return raw
 	}
+	return base.ResolveReference(target).String()
+}
+
+func resolveURLAgainst(baseURL, raw string) string {
+	if raw == "" {
+		return ""
+	}
+
+	base, err := url.Parse(baseURL)
+	if err != nil {
+		return raw
+	}
+	target, err := url.Parse(raw)
+	if err != nil {
+		return raw
+	}
+
 	return base.ResolveReference(target).String()
 }
 

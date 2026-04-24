@@ -258,6 +258,70 @@ func TestGet_ReturnsHTTPStatusError(t *testing.T) {
 	}
 }
 
+func TestGetVotingResults_FetchesDetailedBillVotes(t *testing.T) {
+	lawHTML := minimalLawProjectHTML("57706", "0001", "/chronology/57706")
+	chronologyHTML := readFixtureFile(t, "chronology_voting_fixture.html")
+	plenaryHTML := readFixtureFile(t, "plenary_votes_fixture.html")
+	detailHTML := readFixtureFile(t, "bill_vote_details_fixture.html")
+
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch {
+		case r.URL.Path == "/billinfo/Bills/Card/57706":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write([]byte(lawHTML))
+		case r.URL.Path == "/chronology/57706":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(chronologyHTML)
+		case r.URL.Path == "/pls/radan_gs09/ns_el_h2" && r.URL.Query().Get("data") == "29102019" && r.URL.Query().Get("nom_s") == "3":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(plenaryHTML)
+		case r.URL.Path == "/pls/radan_gs09/ns_el_h2":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write([]byte("<html><body></body></html>"))
+		case r.URL.Path == "/pls/radan_gs09/ns_golos" && r.URL.Query().Get("g_id") == "1314":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write([]byte(strings.ReplaceAll(string(detailHTML), "g_id=1315", "g_id=1314")))
+		case r.URL.Path == "/pls/radan_gs09/ns_golos" && r.URL.Query().Get("g_id") == "1315":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write(detailHTML)
+		case r.URL.Path == "/pls/radan_gs09/ns_zakon_gol_dep_wohf":
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			_, _ = w.Write([]byte("<html><body></body></html>"))
+		default:
+			t.Fatalf("unexpected path: %s?%s", r.URL.Path, r.URL.RawQuery)
+		}
+	}))
+	defer srv.Close()
+
+	c := New(srv.URL)
+	resp, err := c.GetVotingResults("57706")
+	if err != nil {
+		t.Fatalf("get voting results: %v", err)
+	}
+
+	if resp.BillID != "57706" || resp.RegistrationNumber != "0001" {
+		t.Fatalf("unexpected bill voting header: %+v", resp)
+	}
+	if resp.SourceURL != "https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_gol_dep_wohf?zn=0001" {
+		t.Fatalf("unexpected source url: %q", resp.SourceURL)
+	}
+	if len(resp.Votes) != 2 {
+		t.Fatalf("expected 2 vote events, got %+v", resp.Votes)
+	}
+	if resp.Votes[0].GID != "1314" || resp.Votes[1].GID != "1315" {
+		t.Fatalf("unexpected vote ids: %+v", resp.Votes)
+	}
+	if resp.Votes[1].People[0].Name != "Новинський Вадим Владиславович" {
+		t.Fatalf("expected full deputy name, got %+v", resp.Votes[1].People[0])
+	}
+	if resp.Votes[1].People[0].DeputyID != "40" {
+		t.Fatalf("expected deputy id, got %+v", resp.Votes[1].People[0])
+	}
+	if resp.Votes[1].People[2].Status != "Не голосував" || resp.Votes[1].People[2].RawStatus != "Не голосувала" {
+		t.Fatalf("unexpected normalized status: %+v", resp.Votes[1].People[2])
+	}
+}
+
 func readFixtureFile(t *testing.T, name string) []byte {
 	t.Helper()
 
@@ -293,4 +357,8 @@ func withLocalVotingResults(raw []byte, localPath string) []byte {
 
 func withLocalLawProjectID(raw []byte, id string) []byte {
 	return []byte(strings.Replace(string(raw), `data-id="57707"`, `data-id="`+id+`"`, 1))
+}
+
+func minimalLawProjectHTML(id, registrationNumber, chronologyURL string) string {
+	return `<html><body><div class="wrap-body"><div class="around-create card-zakonoproektu"><h2 class="h2 text">Проект Закону</h2><div id="qr-code" data-id="` + id + `"></div><div class="info"><div class="row"><div class="font-weight-bold">Номер, дата реєстрації</div><div class="col">` + registrationNumber + ` від 09.09.2019</div></div><div class="row"><div class="font-weight-bold">Суб'єкт права законодавчої ініціативи</div><div class="col">Кабінет Міністрів України</div></div></div><div id="nav-tab1"><table><thead><tr><th>Дата</th><th>Прийнято в цілому</th></tr></thead><tbody><tr><td>29.10.2019</td><td>Прийнято в цілому</td></tr></tbody></table></div><div id="nav-tab5"><embed src="` + chronologyURL + `"></div><div id="nav-tab6"><embed src="https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_gol_dep_wohf?zn=` + registrationNumber + `"></div></div></div></body></html>`
 }

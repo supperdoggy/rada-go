@@ -100,3 +100,52 @@ func TestLawProjectContractJSONFields_Expanded(t *testing.T) {
 		t.Fatalf("unexpected json contract\n got: %s\nwant: %s", raw, want)
 	}
 }
+
+func TestBillVotingResultsContractJSONFields(t *testing.T) {
+	payload := BillVotingResults{
+		BillID:             "57706",
+		RegistrationNumber: "0001",
+		SourceURL:          "https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_gol_dep_wohf?zn=0001",
+		Votes: []BillVoteEvent{
+			{
+				GID:      "1315",
+				Title:    "Поіменне голосування про проект Закону (№0001) - в цілому",
+				DateTime: "29.10.2019 16:35",
+				URL:      "https://w1.c1.rada.gov.ua/pls/radan_gs09/ns_golos?g_id=1315",
+				RTFURL:   "https://w2.rada.gov.ua/pls/radan_gs09/ns_golos_rtf?g_id=1315&vid=1",
+				PrintURL: "https://w2.rada.gov.ua/pls/radan_gs09/ns_golos_print?g_id=1315&vid=1",
+				Decision: "Рішення прийнято",
+				Summary: []VoteSummaryItem{
+					{Label: "За", Value: "310"},
+				},
+				FactionSummary: []FactionVoteSummary{
+					{
+						Name:    `Фракція політичної партії "СЛУГА НАРОДУ"`,
+						Members: "252",
+						Summary: []VoteSummaryItem{
+							{Label: "За", Value: "214"},
+						},
+					},
+				},
+				People: []PersonVote{
+					{
+						Name:      "Новинський Вадим Владиславович",
+						DeputyID:  "40",
+						Faction:   `Фракція політичної партії "ОПОЗИЦІЙНА ПЛАТФОРМА-ЗА ЖИТТЯ"`,
+						Status:    "Відсутній",
+						RawStatus: "Відсутній",
+					},
+				},
+			},
+		},
+	}
+
+	raw, err := json.Marshal(payload)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	want := `{"billId":"57706","registrationNumber":"0001","sourceURL":"https://w2.rada.gov.ua/pls/radan_gs09/ns_zakon_gol_dep_wohf?zn=0001","votes":[{"gId":"1315","title":"Поіменне голосування про проект Закону (№0001) - в цілому","dateTime":"29.10.2019 16:35","url":"https://w1.c1.rada.gov.ua/pls/radan_gs09/ns_golos?g_id=1315","rtfURL":"https://w2.rada.gov.ua/pls/radan_gs09/ns_golos_rtf?g_id=1315\u0026vid=1","printURL":"https://w2.rada.gov.ua/pls/radan_gs09/ns_golos_print?g_id=1315\u0026vid=1","decision":"Рішення прийнято","summary":[{"label":"За","value":"310"}],"factionSummary":[{"name":"Фракція політичної партії \"СЛУГА НАРОДУ\"","members":"252","summary":[{"label":"За","value":"214"}]}],"people":[{"name":"Новинський Вадим Владиславович","deputyId":"40","faction":"Фракція політичної партії \"ОПОЗИЦІЙНА ПЛАТФОРМА-ЗА ЖИТТЯ\"","status":"Відсутній","rawStatus":"Відсутній"}]}]}`
+	if string(raw) != want {
+		t.Fatalf("unexpected json contract\n got: %s\nwant: %s", raw, want)
+	}
+}

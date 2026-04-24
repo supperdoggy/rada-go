@@ -97,3 +97,41 @@ type VoteSummaryItem struct {
 	Label string `json:"label"`
 	Value string `json:"value"`
 }
+
+// BillVotingResults captures detailed bill-based vote events.
+type BillVotingResults struct {
+	BillID             string          `json:"billId"`
+	RegistrationNumber string          `json:"registrationNumber,omitempty"`
+	SourceURL          string          `json:"sourceURL"`
+	Votes              []BillVoteEvent `json:"votes"`
+}
+
+// BillVoteEvent captures one discovered vote event for a bill.
+type BillVoteEvent struct {
+	GID            string               `json:"gId"`
+	Title          string               `json:"title"`
+	DateTime       string               `json:"dateTime,omitempty"`
+	URL            string               `json:"url"`
+	RTFURL         string               `json:"rtfURL,omitempty"`
+	PrintURL       string               `json:"printURL,omitempty"`
+	Decision       string               `json:"decision,omitempty"`
+	Summary        []VoteSummaryItem    `json:"summary,omitempty"`
+	FactionSummary []FactionVoteSummary `json:"factionSummary,omitempty"`
+	People         []PersonVote         `json:"people,omitempty"`
+}
+
+// FactionVoteSummary captures one faction-level vote summary.
+type FactionVoteSummary struct {
+	Name    string            `json:"name"`
+	Members string            `json:"members,omitempty"`
+	Summary []VoteSummaryItem `json:"summary,omitempty"`
+}
+
+// PersonVote captures one deputy's vote in a vote event.
+type PersonVote struct {
+	Name      string `json:"name"`
+	DeputyID  string `json:"deputyId,omitempty"`
+	Faction   string `json:"faction,omitempty"`
+	Status    string `json:"status"`
+	RawStatus string `json:"rawStatus,omitempty"`
+}
